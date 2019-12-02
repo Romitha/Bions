@@ -159,7 +159,7 @@ class KafkaActivity:
         date_rng = pd.date_range(start='1/1/2018', end='1/02/2018', freq='S')
         count = 0
         for date in date_rng:
-            temp = random.randrange(0, 60, 6)
+            temp = random.randrange(0, 160, 6)
             count += 1
             # time.sleep(2.4)
             # pprint.pprint(row)

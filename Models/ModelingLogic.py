@@ -7,6 +7,7 @@ from sklearn.metrics import accuracy_score, f1_score, log_loss
 from sklearn.model_selection import train_test_split
 
 from Activity.KafkaActivity import KafkaActivity
+from AnormallyDetection.DetectionActivity import DetectionActivity
 from Models.SGDClassifierClass import SGDClassifierClass
 import numpy as np
 import pandas as pd
@@ -131,13 +132,6 @@ class ModelingLogic:
         """ Consume the kafka message broker stream and partial fit the model """
 
         print("Consume the kafka message broker stream and partial fit the model")
-
-        row_list = []
-        ll_list = []
-        accuracy_list = []
-        f1_list = []
-
-        selected_models = 0
         consumer = KafkaActivity.create_kafka_consumer(topic_name)
         print(consumer)
 
@@ -145,14 +139,15 @@ class ModelingLogic:
 
         for message in consumer:
             message = json.loads(message.value)
-            X = np.array(message['X'])
-            y = np.array(message['y'])
-            print(y)
+            X = message['X']
+            y = message['y']
+            print(message['X'])
+            print(message['y'])
 
-            if counter == 1:
-                print(counter)
-            else:
-                print(counter)
+            df = DetectionActivity.create_data_frmae(X, y)
+            pred = DetectionActivity.make_forecastign('/home/janith/Documents/Python/KafkaRealTimeML/AnormallyDetection/anormaly_detection_model.pckl', df)
+            pred = DetectionActivity.detect_anomalies(pred)
+            print(pred)
 
             counter += 1
 
